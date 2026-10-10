@@ -56,9 +56,19 @@ export const CATEGORIES: Record<CategoryId, CategoryMeta> = {
   health: { id: 'health', label: 'Health & fitness', kind: 'expense', icon: 'fitness-outline' },
   personal: { id: 'personal', label: 'Personal care', kind: 'expense', icon: 'sparkles-outline' },
   fees: { id: 'fees', label: 'Fees & charges', kind: 'expense', icon: 'alert-circle-outline' },
-  other: { id: 'other', label: 'Other', kind: 'expense', icon: 'ellipsis-horizontal-circle-outline' },
+  other: {
+    id: 'other',
+    label: 'Other',
+    kind: 'expense',
+    icon: 'ellipsis-horizontal-circle-outline',
+  },
   income: { id: 'income', label: 'Income', kind: 'income', icon: 'cash-outline' },
-  transfer: { id: 'transfer', label: 'Transfers', kind: 'transfer', icon: 'swap-horizontal-outline' },
+  transfer: {
+    id: 'transfer',
+    label: 'Transfers',
+    kind: 'transfer',
+    icon: 'swap-horizontal-outline',
+  },
 };
 
 export const EXPENSE_CATEGORY_IDS: readonly CategoryId[] = CATEGORY_IDS.filter(

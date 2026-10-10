@@ -30,10 +30,24 @@ describe('ruleMatches', () => {
   });
 
   it('supports equals and startsWith', () => {
-    expect(ruleMatches(rule({ operator: 'equals', pattern: 'uber' }), tx({ merchantName: 'Uber' }))).toBe(true);
-    expect(ruleMatches(rule({ operator: 'equals', pattern: 'uber' }), tx({ merchantName: 'Uber Eats' }))).toBe(false);
-    expect(ruleMatches(rule({ operator: 'startsWith', pattern: 'uber' }), tx({ merchantName: 'Uber Eats' }))).toBe(true);
-    expect(ruleMatches(rule({ operator: 'startsWith', pattern: 'eats' }), tx({ merchantName: 'Uber Eats' }))).toBe(false);
+    expect(
+      ruleMatches(rule({ operator: 'equals', pattern: 'uber' }), tx({ merchantName: 'Uber' })),
+    ).toBe(true);
+    expect(
+      ruleMatches(rule({ operator: 'equals', pattern: 'uber' }), tx({ merchantName: 'Uber Eats' })),
+    ).toBe(false);
+    expect(
+      ruleMatches(
+        rule({ operator: 'startsWith', pattern: 'uber' }),
+        tx({ merchantName: 'Uber Eats' }),
+      ),
+    ).toBe(true);
+    expect(
+      ruleMatches(
+        rule({ operator: 'startsWith', pattern: 'eats' }),
+        tx({ merchantName: 'Uber Eats' }),
+      ),
+    ).toBe(false);
   });
 
   it('applies inclusive amount bounds to the absolute amount', () => {
@@ -61,10 +75,18 @@ describe('sortRules', () => {
 
 describe('mapPlaidCategory', () => {
   it('prefers detailed mappings over primary ones', () => {
-    expect(mapPlaidCategory({ primary: 'FOOD_AND_DRINK', detailed: 'FOOD_AND_DRINK_GROCERIES' })).toBe('groceries');
-    expect(mapPlaidCategory({ primary: 'FOOD_AND_DRINK', detailed: 'FOOD_AND_DRINK_COFFEE' })).toBe('dining');
-    expect(mapPlaidCategory({ primary: 'RENT_AND_UTILITIES', detailed: 'RENT_AND_UTILITIES_RENT' })).toBe('housing');
-    expect(mapPlaidCategory({ primary: 'LOAN_PAYMENTS', detailed: 'LOAN_PAYMENTS_CREDIT_CARD_PAYMENT' })).toBe('transfer');
+    expect(
+      mapPlaidCategory({ primary: 'FOOD_AND_DRINK', detailed: 'FOOD_AND_DRINK_GROCERIES' }),
+    ).toBe('groceries');
+    expect(mapPlaidCategory({ primary: 'FOOD_AND_DRINK', detailed: 'FOOD_AND_DRINK_COFFEE' })).toBe(
+      'dining',
+    );
+    expect(
+      mapPlaidCategory({ primary: 'RENT_AND_UTILITIES', detailed: 'RENT_AND_UTILITIES_RENT' }),
+    ).toBe('housing');
+    expect(
+      mapPlaidCategory({ primary: 'LOAN_PAYMENTS', detailed: 'LOAN_PAYMENTS_CREDIT_CARD_PAYMENT' }),
+    ).toBe('transfer');
   });
 
   it('returns null for unknown or missing categories', () => {
@@ -90,7 +112,9 @@ describe('categorize', () => {
     const plaid = { primary: 'GENERAL_MERCHANDISE', detailed: 'GENERAL_MERCHANDISE_OTHER' };
     const coffee = tx({ merchantName: 'Starbucks', plaidCategory: plaid });
 
-    expect(categorize(coffee, [rule({ id: 'r1', pattern: 'starbucks', category: 'entertainment' })])).toEqual({
+    expect(
+      categorize(coffee, [rule({ id: 'r1', pattern: 'starbucks', category: 'entertainment' })]),
+    ).toEqual({
       category: 'entertainment',
       source: 'rule',
       ruleId: 'r1',
@@ -119,9 +143,17 @@ describe('categorize', () => {
 
 describe('recategorize', () => {
   it('returns only changed, non-manual transactions', () => {
-    const manual = tx({ merchantName: 'Blue Bottle', category: 'groceries', categorySource: 'manual' });
+    const manual = tx({
+      merchantName: 'Blue Bottle',
+      category: 'groceries',
+      categorySource: 'manual',
+    });
     const auto = tx({ merchantName: 'Blue Bottle', category: 'other', categorySource: 'default' });
-    const unchanged = tx({ merchantName: 'Starbucks', category: 'dining', categorySource: 'keyword' });
+    const unchanged = tx({
+      merchantName: 'Starbucks',
+      category: 'dining',
+      categorySource: 'keyword',
+    });
     const r = rule({ id: 'bb', pattern: 'blue bottle', category: 'dining' });
 
     const changes = recategorize([manual, auto, unchanged], [r]);
@@ -129,26 +161,43 @@ describe('recategorize', () => {
   });
 
   it('reverts rule-assigned transactions when their rule is deleted', () => {
-    const t = tx({ merchantName: 'Starbucks', category: 'entertainment', categorySource: 'rule', ruleId: 'gone' });
-    expect(recategorize([t], [])).toEqual([{ id: t.id, category: 'dining', source: 'keyword', ruleId: null }]);
+    const t = tx({
+      merchantName: 'Starbucks',
+      category: 'entertainment',
+      categorySource: 'rule',
+      ruleId: 'gone',
+    });
+    expect(recategorize([t], [])).toEqual([
+      { id: t.id, category: 'dining', source: 'keyword', ruleId: null },
+    ]);
   });
 });
 
 describe('rule drafts', () => {
   it('uses the merchant name when available', () => {
-    expect(ruleDraftFromTransaction(tx({ merchantName: 'Blue Bottle', name: 'BLUE BOTTLE #22' }), 'dining').pattern).toBe(
-      'Blue Bottle',
-    );
+    expect(
+      ruleDraftFromTransaction(
+        tx({ merchantName: 'Blue Bottle', name: 'BLUE BOTTLE #22' }),
+        'dining',
+      ).pattern,
+    ).toBe('Blue Bottle');
   });
 
   it('strips trailing reference numbers from descriptions', () => {
-    expect(ruleDraftFromTransaction(tx({ merchantName: null, name: 'CITY PARKING #4421 0099' }), 'transport').pattern).toBe(
-      'CITY PARKING',
-    );
+    expect(
+      ruleDraftFromTransaction(
+        tx({ merchantName: null, name: 'CITY PARKING #4421 0099' }),
+        'transport',
+      ).pattern,
+    ).toBe('CITY PARKING');
   });
 
   it('counts matches for previews', () => {
-    const txs = [tx({ merchantName: 'Lyft' }), tx({ merchantName: 'Lyft' }), tx({ merchantName: 'Uber' })];
+    const txs = [
+      tx({ merchantName: 'Lyft' }),
+      tx({ merchantName: 'Lyft' }),
+      tx({ merchantName: 'Uber' }),
+    ];
     expect(countRuleMatches(rule({ pattern: 'lyft' }), txs)).toBe(2);
   });
 });

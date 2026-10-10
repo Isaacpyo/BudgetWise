@@ -46,7 +46,12 @@ describe('computeBudgetProgress', () => {
   });
 
   it('flags over-budget categories and computes pace for the current month', () => {
-    const [p] = computeBudgetProgress(october, [budget('groceries', 15_000)], '2026-10', '2026-10-10');
+    const [p] = computeBudgetProgress(
+      october,
+      [budget('groceries', 15_000)],
+      '2026-10',
+      '2026-10-10',
+    );
     expect(p?.status).toBe('over');
     expect(p?.ratio).toBeCloseTo(20_000 / 15_000);
     expect(p?.paceRatio).toBeCloseTo(10 / 31);
@@ -63,7 +68,11 @@ describe('computeBudgetProgress', () => {
   });
 
   it('summarises totals', () => {
-    const progress = computeBudgetProgress(october, [budget('dining', 4_000), budget('groceries', 25_000)], '2026-10');
+    const progress = computeBudgetProgress(
+      october,
+      [budget('dining', 4_000), budget('groceries', 25_000)],
+      '2026-10',
+    );
     expect(summarizeBudgets(progress)).toEqual({
       limitCents: 29_000,
       spentCents: 24_500,

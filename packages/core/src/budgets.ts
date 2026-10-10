@@ -102,7 +102,9 @@ export function suggestBudget(
   months: readonly string[],
 ): number | null {
   if (months.length === 0) return null;
-  const totals = months.map((m) => Math.max(0, spendByCategory(transactions, m).get(category) ?? 0));
+  const totals = months.map((m) =>
+    Math.max(0, spendByCategory(transactions, m).get(category) ?? 0),
+  );
   const avg = totals.reduce((s, v) => s + v, 0) / months.length;
   if (avg <= 0) return null;
   return Math.ceil(avg / 1000) * 1000;

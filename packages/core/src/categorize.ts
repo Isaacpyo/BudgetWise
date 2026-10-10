@@ -44,12 +44,12 @@ export function ruleMatches(rule: RuleMatcher, tx: CategorizableTransaction): bo
 }
 
 /** Evaluation order: priority ascending, then oldest first, then id for determinism. */
-export function sortRules<T extends Pick<Rule, 'priority' | 'createdAt' | 'id'>>(rules: readonly T[]): T[] {
+export function sortRules<T extends Pick<Rule, 'priority' | 'createdAt' | 'id'>>(
+  rules: readonly T[],
+): T[] {
   return [...rules].sort(
     (a, b) =>
-      a.priority - b.priority ||
-      a.createdAt.localeCompare(b.createdAt) ||
-      a.id.localeCompare(b.id),
+      a.priority - b.priority || a.createdAt.localeCompare(b.createdAt) || a.id.localeCompare(b.id),
   );
 }
 

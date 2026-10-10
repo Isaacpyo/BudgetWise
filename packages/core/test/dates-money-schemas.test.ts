@@ -96,8 +96,22 @@ describe('schemas', () => {
   });
 
   it('rejects bad rules', () => {
-    expect(ruleInputSchema.safeParse({ field: 'merchant', operator: 'contains', pattern: 'x', category: 'transport' }).success).toBe(false);
-    expect(ruleInputSchema.safeParse({ field: 'merchant', operator: 'contains', pattern: 'lyft', category: 'nope' }).success).toBe(false);
+    expect(
+      ruleInputSchema.safeParse({
+        field: 'merchant',
+        operator: 'contains',
+        pattern: 'x',
+        category: 'transport',
+      }).success,
+    ).toBe(false);
+    expect(
+      ruleInputSchema.safeParse({
+        field: 'merchant',
+        operator: 'contains',
+        pattern: 'lyft',
+        category: 'nope',
+      }).success,
+    ).toBe(false);
     expect(
       ruleInputSchema.safeParse({
         field: 'merchant',
@@ -114,6 +128,9 @@ describe('schemas', () => {
     expect(budgetInputSchema.safeParse({ limitCents: 50 }).success).toBe(false);
     expect(budgetInputSchema.safeParse({ limitCents: 10.5 }).success).toBe(false);
     expect(budgetInputSchema.parse({ limitCents: 40000 })).toEqual({ limitCents: 40000 });
-    expect(transactionPatchSchema.parse({ category: null })).toEqual({ category: null, createRule: false });
+    expect(transactionPatchSchema.parse({ category: null })).toEqual({
+      category: null,
+      createRule: false,
+    });
   });
 });

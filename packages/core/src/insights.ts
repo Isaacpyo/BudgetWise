@@ -77,7 +77,10 @@ export function categoryBreakdown(
 }
 
 /** Running total of expense spend for each day of the month (index 0 = day 1). */
-export function cumulativeDailySpend(transactions: readonly Transaction[], month: string): number[] {
+export function cumulativeDailySpend(
+  transactions: readonly Transaction[],
+  month: string,
+): number[] {
   const perDay = new Array<number>(daysInMonth(month)).fill(0);
   for (const tx of transactions) {
     if (tx.month !== month || !isExpenseCategory(tx.category)) continue;

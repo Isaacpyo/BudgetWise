@@ -24,7 +24,8 @@ export const ruleInputSchema = z
     maxAmountCents: z.number().int().min(0).max(MAX_CENTS).nullable().default(null),
   })
   .refine(
-    (r) => r.minAmountCents == null || r.maxAmountCents == null || r.minAmountCents <= r.maxAmountCents,
+    (r) =>
+      r.minAmountCents == null || r.maxAmountCents == null || r.minAmountCents <= r.maxAmountCents,
     { message: 'Minimum amount must not exceed maximum', path: ['maxAmountCents'] },
   );
 export type RuleInput = z.input<typeof ruleInputSchema>;
