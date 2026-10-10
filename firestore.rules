@@ -1,0 +1,28 @@
+rules_version = '2';
+
+// BudgetWise security model:
+// - Clients may READ their own data under users/{uid}/** (live listeners).
+// - Clients may never WRITE. Every write goes through the API, which verifies
+//   the Firebase ID token and validates input before using the Admin SDK.
+// - Server-only collections (itemSecrets, linkSessions) are unreadable.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow write: if false;
+
+      match /{document=**} {
+        allow read: if isOwner(uid);
+        allow write: if false;
+      }
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
