@@ -1,0 +1,45 @@
+# dependencies
+node_modules/
+
+# builds
+dist/
+web-build/
+*.tsbuildinfo
+coverage/
+
+# Expo
+.expo/
+expo-env.d.ts
+apps/web/public/canvaskit.wasm
+/ios
+/android
+apps/web/ios
+apps/web/android
+.metro-health-check*
+
+# env & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.p8
+*.p12
+*.jks
+*.key
+*.mobileprovision
+service-account*.json
+
+# test output
+test-results/
+playwright-report/
+blob-report/
+
+# firebase emulators
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.firebase/
+
+# misc
+.DS_Store
+npm-debug.*
