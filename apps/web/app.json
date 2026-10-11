@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "BudgetWise",
+    "slug": "budgetwise",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "budgetwise",
+    "userInterfaceStyle": "light",
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.temitopeagbola.budgetwise"
+    },
+    "android": {
+      "package": "com.temitopeagbola.budgetwise",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "name": "BudgetWise",
+      "shortName": "BudgetWise",
+      "description": "Personal finance: link a sandbox bank, auto-categorise spending, set budgets.",
+      "themeColor": "#0f766e",
+      "backgroundColor": "#f6f7f5",
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": ["expo-router", "expo-status-bar", "expo-web-browser", "expo-font"]
+  }
+}
