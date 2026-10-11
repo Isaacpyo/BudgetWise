@@ -2,6 +2,9 @@ import type { Budget, CategoryId, Item, Rule, Transaction, UserProfile } from '@
 import type { DocumentReference, Firestore, WriteBatch } from 'firebase-admin/firestore';
 import type { ItemSecret, LinkSession, Repo, TransactionPatch } from './types';
 
+/** gRPC status code Firestore uses for a missing document. */
+const NOT_FOUND = 5;
+
 /** Firestore caps a batch at 500 writes; stay comfortably under it. */
 const BATCH_LIMIT = 400;
 
@@ -53,7 +56,14 @@ export class FirestoreRepo implements Repo {
     await this.items(uid).doc(item.id).set(item);
   }
   async updateItem(uid: string, itemId: string, patch: Partial<Item>) {
-    await this.items(uid).doc(itemId).set(patch, { merge: true });
+    try {
+      // update() (not set/merge) so a sync racing an unlink can't resurrect a
+      // half-empty item document.
+      await this.items(uid).doc(itemId).update(patch);
+    } catch (err) {
+      if ((err as { code?: number }).code === NOT_FOUND) return;
+      throw err;
+    }
   }
   async deleteItem(uid: string, itemId: string) {
     await this.items(uid).doc(itemId).delete();

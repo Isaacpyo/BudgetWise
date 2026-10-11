@@ -4,6 +4,7 @@ import {
   recategorize,
   ruleDraftFromTransaction,
   ruleInputSchema,
+  ruleMatches,
   sortRules,
   type Rule,
   type RuleInput,
@@ -112,20 +113,20 @@ export async function setTransactionCategory(
       },
     ]);
   } else if (patch.createRule) {
-    // The rule is derived from this transaction, so it will match it — unless
-    // the transaction was a manual override, which recategorisation skips.
-    await deps.repo.patchTransactions(uid, [{ id: txId, categorySource: 'default', updatedAt }]);
+    // Create the rule first: if that fails (validation, rule limit) nothing
+    // about this transaction has changed yet.
     const { rule, recategorized } = await createRule(
       deps,
       uid,
       ruleDraftFromTransaction(tx, patch.category),
     );
-    const after = (await deps.repo.getTransactions(uid, [txId])).get(txId);
-    if (after?.category !== patch.category) {
-      await deps.repo.patchTransactions(uid, [
-        { id: txId, category: patch.category, categorySource: 'manual', ruleId: null, updatedAt },
-      ]);
-    }
+    // Recategorisation skips manual overrides, so settle this one explicitly.
+    // The rule is derived from it and runs first, so it normally matches.
+    await deps.repo.patchTransactions(uid, [
+      ruleMatches(rule, tx)
+        ? { id: txId, category: rule.category, categorySource: 'rule', ruleId: rule.id, updatedAt }
+        : { id: txId, category: patch.category, categorySource: 'manual', ruleId: null, updatedAt },
+    ]);
     const transaction = (await deps.repo.getTransactions(uid, [txId])).get(txId) ?? tx;
     return { transaction, rule, recategorized };
   } else {

@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Transaction } from '@budgetwise/core';
 import { sha256 } from '../src/crypto';
+import { MAX_RULES_PER_USER } from '../src/services/categorisation';
 import type { BankProvider } from '../src/providers/types';
 import type { MemoryRepo } from '../src/repo/memory';
 import { auth, makeApp } from './helpers';
@@ -494,6 +495,71 @@ describe('rules and overrides', () => {
       payload: { category: 'bitcoin' },
     });
     expect(invalid.statusCode).toBe(400);
+  });
+  it('turning a manual override into a rule hands it to the rule', async () => {
+    let repo: MemoryRepo;
+    ({ app, repo } = await makeApp());
+    await linkMockBank(app);
+    const [tx] = byMerchant(await repo.listTransactions('alice'), 'Chipotle');
+    await app.inject({
+      method: 'PATCH',
+      url: `/v1/transactions/${tx!.id}`,
+      headers: auth(),
+      payload: { category: 'travel' },
+    });
+
+    const res = await app.inject({
+      method: 'PATCH',
+      url: `/v1/transactions/${tx!.id}`,
+      headers: auth(),
+      payload: { category: 'groceries', createRule: true },
+    });
+    expect(res.statusCode).toBe(200);
+    const { rule, transaction } = res.json();
+    expect(transaction).toMatchObject({
+      category: 'groceries',
+      categorySource: 'rule',
+      ruleId: rule.id,
+    });
+  });
+
+  it('a rejected rule leaves the transaction untouched', async () => {
+    let repo: MemoryRepo;
+    ({ app, repo } = await makeApp());
+    await linkMockBank(app);
+    const [tx] = byMerchant(await repo.listTransactions('alice'), 'Chipotle');
+    await app.inject({
+      method: 'PATCH',
+      url: `/v1/transactions/${tx!.id}`,
+      headers: auth(),
+      payload: { category: 'travel' },
+    });
+    for (let i = 0; i < MAX_RULES_PER_USER; i++) {
+      await repo.saveRule('alice', {
+        id: `r${i}`,
+        field: 'merchant',
+        operator: 'equals',
+        pattern: `merchant ${i}`,
+        category: 'other',
+        minAmountCents: null,
+        maxAmountCents: null,
+        priority: i,
+        createdAt: '2026-01-01T00:00:00.000Z',
+      });
+    }
+
+    const res = await app.inject({
+      method: 'PATCH',
+      url: `/v1/transactions/${tx!.id}`,
+      headers: auth(),
+      payload: { category: 'groceries', createRule: true },
+    });
+    expect(res.statusCode).toBe(409);
+    expect(res.json().error.code).toBe('RULE_LIMIT');
+    expect((await repo.getTransactions('alice', [tx!.id])).get(tx!.id)).toMatchObject({
+      category: 'travel',
+      categorySource: 'manual',
+    });
   });
 });
 
