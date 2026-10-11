@@ -44,7 +44,7 @@ function demoRules(createdAt: string): Rule[] {
 }
 
 /**
- * Wipe and rebuild the shared demo account: one sandbox bank with ~5 months
+ * Wipe and rebuild the shared demo account: one sandbox bank with six months
  * of deterministic transactions, two rules, six budgets and a manual override.
  */
 export async function seedDemoUser(deps: Deps, uid = deps.config.demo.uid): Promise<void> {

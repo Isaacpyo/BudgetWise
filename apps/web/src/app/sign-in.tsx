@@ -128,7 +128,7 @@ export default function SignInScreen() {
               testID="try-demo"
             />
             <Text style={styles.demoHint}>
-              One click, no sign-up: a demo account with five months of sandbox data.
+              One click, no sign-up: a demo account with six months of sandbox data.
             </Text>
 
             <View style={styles.divider}>

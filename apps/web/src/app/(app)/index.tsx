@@ -55,7 +55,7 @@ export default function OverviewScreen() {
           <EmptyState
             icon="link-outline"
             title="Link your first bank"
-            body="Connect a sandbox bank through Plaid Link. We'll import about five months of transactions and categorise them automatically."
+            body="Connect a sandbox bank through Plaid Link. We'll import about six months of transactions and categorise them automatically."
             action={
               <Button
                 label="Link a bank"

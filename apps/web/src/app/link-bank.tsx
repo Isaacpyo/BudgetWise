@@ -92,8 +92,7 @@ export default function LinkBankScreen() {
         </Text>
         <Text style={styles.body}>
           BudgetWise uses Plaid in sandbox mode: you connect a test bank, never a real account. We
-          store an encrypted access token on our server and import about five months of
-          transactions.
+          store an encrypted access token on our server and import about six months of transactions.
         </Text>
       </View>
 
