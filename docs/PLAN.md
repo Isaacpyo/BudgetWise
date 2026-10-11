@@ -61,18 +61,18 @@ linkSessions/{sha256(linkToken)}  uid, createdAt                                
 
 ## API surface
 
-| Method | Path | Purpose |
-| --- | --- | --- |
-| GET | /health | liveness + provider (also used to wake the server) |
-| POST | /v1/demo/session | custom token for the demo user (re-seeds when stale) |
-| POST | /v1/plaid/link-token | create a Link token (web or hosted) |
-| POST | /v1/plaid/exchange | public token → access token, then initial sync |
-| POST | /v1/plaid/hosted-link/complete | finish a Hosted Link session |
-| POST | /v1/sync | `/transactions/sync` for all of the user's items |
-| DELETE | /v1/items/:id | unlink a bank and drop its transactions |
-| PATCH | /v1/transactions/:id | manual category override (optionally create a rule) |
-| POST/PATCH/DELETE | /v1/rules[/:id] | manage rules, re-categorise |
-| PUT/DELETE | /v1/budgets/:category | set / clear a monthly budget |
+| Method            | Path                           | Purpose                                              |
+| ----------------- | ------------------------------ | ---------------------------------------------------- |
+| GET               | /health                        | liveness + provider (also used to wake the server)   |
+| POST              | /v1/demo/session               | custom token for the demo user (re-seeds when stale) |
+| POST              | /v1/plaid/link-token           | create a Link token (web or hosted)                  |
+| POST              | /v1/plaid/exchange             | public token → access token, then initial sync       |
+| POST              | /v1/plaid/hosted-link/complete | finish a Hosted Link session                         |
+| POST              | /v1/sync                       | `/transactions/sync` for all of the user's items     |
+| DELETE            | /v1/items/:id                  | unlink a bank and drop its transactions              |
+| PATCH             | /v1/transactions/:id           | manual category override (optionally create a rule)  |
+| POST/PATCH/DELETE | /v1/rules[/:id]                | manage rules, re-categorise                          |
+| PUT/DELETE        | /v1/budgets/:category          | set / clear a monthly budget                         |
 
 ## Testing
 

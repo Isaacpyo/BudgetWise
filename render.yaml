@@ -23,7 +23,7 @@ services:
         - render.yaml
     envVars:
       - key: NODE_VERSION
-        value: "22"
+        value: '22'
       - key: NODE_ENV
         value: production
       - key: LOG_LEVEL
@@ -44,6 +44,6 @@ services:
       - key: TOKEN_ENCRYPTION_KEY
         generateValue: true
       - key: SEED_DEMO_ON_START
-        value: "true"
+        value: 'true'
       - key: DEMO_RESEED_HOURS
-        value: "6"
+        value: '6'

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 240 240" role="img" aria-label="Expo Go QR code placeholder">
+  <rect width="240" height="240" rx="12" fill="#f6f7f5" stroke="#c3c2b7" stroke-dasharray="6 4"/>
+  <text x="120" y="104" text-anchor="middle" font-family="system-ui, sans-serif" font-size="15" font-weight="700" fill="#0b0b0b">Expo Go QR</text>
+  <text x="120" y="130" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#52514e">appears after the first</text>
+  <text x="120" y="148" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#52514e">EAS Update (npm run expo:qr)</text>
+</svg>
