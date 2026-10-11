@@ -1,7 +1,7 @@
 {
   "name": "budgetwise",
   "private": true,
-  "description": "BudgetWise — personal finance app (Expo + Plaid sandbox + Firebase)",
+  "description": "BudgetWise \u2014 personal finance app (Expo + Plaid sandbox + Firebase)",
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -9,7 +9,21 @@
   "engines": {
     "node": ">=22"
   },
-  "scripts": {},
+  "scripts": {
+    "dev:api": "npm run dev --workspace @budgetwise/api",
+    "dev:web": "npm run web --workspace @budgetwise/web",
+    "emulators": "npx -y firebase-tools@15.33.0 emulators:start --only auth,firestore --project demo-budgetwise",
+    "seed": "npm run seed --workspace @budgetwise/api",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build:web": "npm run build:web --workspace @budgetwise/web",
+    "build:web:e2e": "EXPO_PUBLIC_API_URL=http://localhost:8787 EXPO_PUBLIC_USE_FIREBASE_EMULATORS=true EXPO_PUBLIC_FIREBASE_PROJECT_ID=demo-budgetwise npm run build:web --workspace @budgetwise/web",
+    "e2e": "playwright test",
+    "e2e:ci": "npx -y firebase-tools@15.33.0 emulators:exec --only auth,firestore --project demo-budgetwise \"playwright test\""
+  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.64.0",
