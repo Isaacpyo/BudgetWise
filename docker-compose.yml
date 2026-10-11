@@ -1,0 +1,57 @@
+# The whole BudgetWise stack locally, with one command:
+#   docker compose up --build
+# Web: http://localhost:3000  API: http://localhost:8787  Emulator UI: http://localhost:4000
+#
+# Plaid: defaults to the built-in sandbox bank (no keys). To use the real Plaid
+# sandbox, put PLAID_PROVIDER=plaid, PLAID_CLIENT_ID and PLAID_SECRET in .env.
+name: budgetwise
+
+services:
+  firebase:
+    build:
+      context: .
+      dockerfile: infra/firebase/Dockerfile
+    ports:
+      - '4000:4000' # Emulator UI
+      - '4400:4400' # Emulator hub
+      - '8080:8080' # Firestore
+      - '9099:9099' # Auth
+      - '9150:9150' # Firestore UI websocket
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: '8787'
+      LOG_LEVEL: info
+      FIRESTORE_EMULATOR_HOST: firebase:8080
+      FIREBASE_AUTH_EMULATOR_HOST: firebase:9099
+      FIREBASE_PROJECT_ID: demo-budgetwise
+      ALLOWED_ORIGINS: http://localhost:3000,http://localhost:8081
+      PLAID_PROVIDER: ${PLAID_PROVIDER:-mock}
+      PLAID_CLIENT_ID: ${PLAID_CLIENT_ID:-}
+      PLAID_SECRET: ${PLAID_SECRET:-}
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:-}
+      SEED_DEMO_ON_START: 'true'
+    ports:
+      - '8787:8787'
+    depends_on:
+      firebase:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # The browser reaches the API and emulators through the published ports.
+        EXPO_PUBLIC_API_URL: http://localhost:8787
+        EXPO_PUBLIC_USE_FIREBASE_EMULATORS: 'true'
+        EXPO_PUBLIC_FIREBASE_EMULATOR_HOST: localhost
+        EXPO_PUBLIC_FIREBASE_PROJECT_ID: demo-budgetwise
+    ports:
+      - '3000:80'
+    depends_on:
+      - api
