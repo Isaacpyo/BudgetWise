@@ -226,13 +226,11 @@ describe('hosted link (Expo Go)', () => {
   function fakePlaid(publicToken: string | null): BankProvider {
     return {
       name: 'plaid',
-      createLinkToken: vi
-        .fn()
-        .mockResolvedValue({
-          linkToken: 'link-sandbox-abc',
-          expiration: 'x',
-          hostedLinkUrl: 'https://hosted.plaid.com/x',
-        }),
+      createLinkToken: vi.fn().mockResolvedValue({
+        linkToken: 'link-sandbox-abc',
+        expiration: 'x',
+        hostedLinkUrl: 'https://hosted.plaid.com/x',
+      }),
       exchangePublicToken: vi
         .fn()
         .mockResolvedValue({ accessToken: 'access-sandbox-1', itemId: 'item-plaid-1' }),
@@ -241,16 +239,14 @@ describe('hosted link (Expo Go)', () => {
         .mockResolvedValue(
           publicToken ? { publicToken, institution: { id: 'ins_1', name: 'Tartan Bank' } } : null,
         ),
-      syncTransactions: vi
-        .fn()
-        .mockResolvedValue({
-          added: [],
-          modified: [],
-          removedIds: [],
-          accounts: [],
-          nextCursor: 'c1',
-          ready: true,
-        }),
+      syncTransactions: vi.fn().mockResolvedValue({
+        added: [],
+        modified: [],
+        removedIds: [],
+        accounts: [],
+        nextCursor: 'c1',
+        ready: true,
+      }),
       removeItem: vi.fn(),
     };
   }
@@ -317,19 +313,17 @@ describe('hosted link (Expo Go)', () => {
 
   it('surfaces Plaid errors with their display message', async () => {
     const plaid = fakePlaid(null);
-    plaid.createLinkToken = vi
-      .fn()
-      .mockRejectedValue(
-        Object.assign(new Error('400'), {
-          response: {
-            data: {
-              error_code: 'INVALID_API_KEYS',
-              error_message: 'invalid client_id or secret',
-              display_message: null,
-            },
+    plaid.createLinkToken = vi.fn().mockRejectedValue(
+      Object.assign(new Error('400'), {
+        response: {
+          data: {
+            error_code: 'INVALID_API_KEYS',
+            error_message: 'invalid client_id or secret',
+            display_message: null,
           },
-        }),
-      );
+        },
+      }),
+    );
     ({ app } = await makeApp({ plaid }));
     const res = await app.inject({
       method: 'POST',

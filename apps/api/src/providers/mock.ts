@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { addDays, isIsoDate, toIsoDate } from '@budgetwise/core';
+import { addDays, addMonths, isIsoDate, monthBounds, monthOf, toIsoDate } from '@budgetwise/core';
 import { AppError } from '../errors';
 import { generateDay, MOCK_ACCOUNTS } from './mock-data';
 import type { BankProvider, ProviderTransaction, SyncResult } from './types';
@@ -8,7 +8,10 @@ export const MOCK_PUBLIC_TOKEN_PREFIX = 'public-mock-';
 const ACCESS_PREFIX = 'access-mock-';
 
 export interface MockProviderOptions {
-  /** Days of history returned by the first sync. */
+  /**
+   * Days of history returned by the first sync. Defaults to six whole
+   * calendar months (the current one included), matching the app's charts.
+   */
   historyDays?: number;
   /** Injectable clock for tests. */
   now?: () => Date;
@@ -21,11 +24,11 @@ export interface MockProviderOptions {
  */
 export class MockProvider implements BankProvider {
   readonly name = 'mock' as const;
-  private readonly historyDays: number;
+  private readonly historyDays: number | null;
   private readonly now: () => Date;
 
   constructor(opts: MockProviderOptions = {}) {
-    this.historyDays = opts.historyDays ?? 150;
+    this.historyDays = opts.historyDays ?? null;
     this.now = opts.now ?? (() => new Date());
   }
 
@@ -67,9 +70,11 @@ export class MockProvider implements BankProvider {
     const modified: ProviderTransaction[] = [];
 
     const validCursor = cursor && isIsoDate(cursor) ? cursor : null;
-    const firstNewDay = validCursor
-      ? addDays(validCursor, 1)
-      : addDays(today, -this.historyDays + 1);
+    const historyStart =
+      this.historyDays != null
+        ? addDays(today, -this.historyDays + 1)
+        : monthBounds(addMonths(monthOf(today), -5)).start;
+    const firstNewDay = validCursor ? addDays(validCursor, 1) : historyStart;
     const refreshFrom = validCursor ? addDays(validCursor, -1) : firstNewDay;
 
     for (let date = refreshFrom; date <= today; date = addDays(date, 1)) {

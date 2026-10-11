@@ -91,13 +91,14 @@ export function cumulativeDailySpend(
   return perDay.map((v) => (running += v));
 }
 
-export interface PacePoint {
+// A type alias (not an interface) so chart libraries can index it as a record.
+export type PacePoint = {
   day: number;
   /** Cumulative spend in dollars for the selected month; null after today. */
   current: number | null;
   /** Cumulative spend in dollars for the month before. */
   previous: number | null;
-}
+};
 
 /**
  * Series for the "spending pace" line chart: this month vs last month, by day.

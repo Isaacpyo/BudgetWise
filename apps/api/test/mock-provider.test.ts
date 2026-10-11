@@ -62,6 +62,16 @@ describe('MockProvider', () => {
     expect(later.modified.some((t) => t.pending)).toBe(false);
   });
 
+  it('defaults to six whole calendar months of history', async () => {
+    const { added } = await new MockProvider({ now: at('2026-10-10') }).syncTransactions(
+      'access-mock-x',
+      null,
+    );
+    const dates = added.map((t) => t.date).sort();
+    expect(dates[0]).toBe('2026-05-01'); // rent and salary land on the 1st
+    expect(dates.at(-1)).toBe('2026-10-10');
+  });
+
   it('is idempotent within a day', async () => {
     const p = new MockProvider({ now: at('2026-10-10'), historyDays: 10 });
     const first = await p.syncTransactions('access-mock-x', null);
