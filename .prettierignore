@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+package-lock.json
+apps/web/.expo
+test-results
+playwright-report
+*.log
+apps/web/dist

@@ -1,0 +1,46 @@
+{
+  "name": "budgetwise",
+  "private": true,
+  "description": "BudgetWise — personal finance app (Expo + Plaid sandbox + Firebase)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev:api": "npm run dev --workspace @budgetwise/api",
+    "dev:web": "npm run web --workspace @budgetwise/web",
+    "emulators": "npx -y firebase-tools@15.33.0 emulators:start --only auth,firestore --project demo-budgetwise",
+    "seed": "npm run seed --workspace @budgetwise/api",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build:web": "npm run build:web --workspace @budgetwise/web",
+    "build:web:e2e": "EXPO_PUBLIC_API_URL=http://localhost:8787 EXPO_PUBLIC_USE_FIREBASE_EMULATORS=true EXPO_PUBLIC_FIREBASE_PROJECT_ID=demo-budgetwise npm run build:web --workspace @budgetwise/web",
+    "e2e": "playwright test",
+    "e2e:ci": "npx -y firebase-tools@15.33.0 emulators:exec --only auth,firestore --project demo-budgetwise \"playwright test\"",
+    "expo:qr": "node scripts/expo-go-qr.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.0",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "qrcode": "^1.5.4",
+    "serve": "^14.2.6",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.1",
+    "vitest": "^5.0.3"
+  },
+  "overrides": {
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
+  }
+}

@@ -1,0 +1,48 @@
+# Publishes the app to the EAS Update "production" channel on every push to
+# main, so the Expo Go QR code in the README always opens the latest version.
+# Requires an EXPO_TOKEN secret and the EXPO_PUBLIC_* repository variables.
+name: EAS Update
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - apps/web/**
+      - packages/core/**
+      - package-lock.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip unless EXPO_TOKEN is configured
+        id: token
+        run: echo "present=${{ secrets.EXPO_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v5
+        if: steps.token.outputs.present == 'true'
+      - uses: actions/setup-node@v5
+        if: steps.token.outputs.present == 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: expo/expo-github-action@v8
+        if: steps.token.outputs.present == 'true'
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: npm ci
+        if: steps.token.outputs.present == 'true'
+      - name: Publish update
+        if: steps.token.outputs.present == 'true'
+        working-directory: apps/web
+        env:
+          EXPO_PUBLIC_API_URL: ${{ vars.EXPO_PUBLIC_API_URL }}
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ vars.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ vars.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          EXPO_PUBLIC_FIREBASE_PROJECT_ID: ${{ vars.EXPO_PUBLIC_FIREBASE_PROJECT_ID }}
+          EXPO_PUBLIC_FIREBASE_APP_ID: ${{ vars.EXPO_PUBLIC_FIREBASE_APP_ID }}
+        run: eas update --channel production --platform all --message "${{ github.event.head_commit.message || 'Manual update' }}" --non-interactive
