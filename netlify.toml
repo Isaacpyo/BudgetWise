@@ -1,4 +1,4 @@
-# Netlify builds the Expo web export from this monorepo (site: budgetwise,
+# Netlify builds the Expo web export from this monorepo (site: budgetwise1,
 # https://budgetwise.temitopeagbola.com). Netlify detects the npm workspace
 # and installs from the repository root.
 [build]
