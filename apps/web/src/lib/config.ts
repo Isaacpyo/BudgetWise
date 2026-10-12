@@ -31,5 +31,5 @@ export const config = {
   emulatorHost: resolveApiUrl(
     `http://${process.env.EXPO_PUBLIC_FIREBASE_EMULATOR_HOST || 'localhost'}`,
   ).replace('http://', ''),
-  repoUrl: 'https://github.com/isaacpyo/budgetwise',
+  repoUrl: 'https://github.com/temitopeagbola/BudgetWise',
 } as const;
