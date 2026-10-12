@@ -274,7 +274,7 @@ npm run e2e:ci           # Playwright e2e; starts the emulators, API and a stati
 
 | Part        | Where                                    | Config                                                                                     |
 | ----------- | ---------------------------------------- | ------------------------------------------------------------------------------------------ |
-| Web app     | Netlify site `budgetwise`                | [`netlify.toml`](netlify.toml): base `apps/web`, `npm run build:web`, publish `dist`       |
+| Web app     | Netlify site `budgetwise1`               | [`netlify.toml`](netlify.toml): base `apps/web`, `npm run build:web`, publish `dist`       |
 | API         | Render free web service `budgetwise-api` | [`render.yaml`](render.yaml): Node 22, health check `/health`, auto-deploys `main`         |
 | Mobile      | EAS Update, channel `production`         | [`.github/workflows/eas-update.yml`](.github/workflows/eas-update.yml) on pushes to `main` |
 | Auth + data | Firebase project                         | [`firestore.rules`](firestore.rules)                                                       |
